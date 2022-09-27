@@ -1,10 +1,10 @@
 import discord
-From discord.ext import commands
+from discord.ext import commands
 
-bot = commands.Bot(command_prefix='+')
+bot = commands.Bot(command_orefix='sd')
 
 @bot.event
-async deF on_ready():
-    print(">>bot is online <<")
+async def on_ready():
+    print(">> Bot is online <<")
 
-bot.run('MTAyMzkwOTEwOTIyMjg4NzQ5NQ.GbYThN.SacgsmY4xMk0W8o0ARrWcgIRhbibVO-HNa4_x8')
+bot.run('MTAyMzkwOTEwOTIyMjg4NzQ5NQ.GlHNp0.02Mc9jYOGfDUyZ5Y2i_urrtvvQvhzi9Li9re6Y')
