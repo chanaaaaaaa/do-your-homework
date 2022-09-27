@@ -18,4 +18,4 @@ async def on_member_remove(member):
     print(f'[member]leave!')
 
 
-bot.run('MTAyMzkwOTEwOTIyMjg4NzQ5NQ.GlHNp0.02Mc9jYOGfDUyZ5Y2i_urrtvvQvhzi9Li9re6Y')
+bot.run('MTAyMzkwOTEwOTIyMjg4NzQ5NQ.G1yyjB.jO9t0tA_jIybr_MnNyif_4ngidTswMPukk929k')
