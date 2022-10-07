@@ -11,7 +11,7 @@ intents.members = True
 with open('.vscode\setting.json', mode = 'r',encoding="utf8") as jfile :
     jdata = json.load(jfile)
 
-bot = commands.Bot(command_prefix='{', intents = intents)
+bot = commands.Bot(command_prefix='=', intents = intents)
 
 @bot.event
 async def on_ready():
@@ -44,12 +44,21 @@ async def web(ctx):
 
 @bot.command()
 async def work(ctx,*,msg):
-    await ctx.messsage.delete()
+    await ctx.message.delete()
     await ctx.send(msg)
 
 @bot.command()
-async def clean(ctx,num : int):
-    await ctx.messsage.purge(limit = num + 1)
+async def 段考加油啦(ctx):
+    await ctx.send("段考加油啦～～～～")
+
+
+# @bot.command()
+# async def clean(ctx,num : int):
+#    await ctx.message.purge(limit = num + 1)
+
+@bot.command()
+async def clean1(ctx,num):
+    await delete(num, delay=None)
 
 class Task():
     def __init__(*args,**kwargs):
