@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import json
 import asyncio
+from discord import Guild, TextChannel
 
 
 with open('.\setting.json', mode = 'r',encoding="utf8") as jfile :
@@ -42,5 +43,15 @@ async def create(ctx, *, name=None):
   else:
     await guild.create_text_channel(name)
     await ctx.send(f"Created a channel named {name}")
+
+@commands.has_permissions(administrator=True)
+@bot.command()
+async def create_channel(ctx, channel_name: str):
+    guild = ctx.guild
+    existing_channel = discord.utils.get(guild.channels, name=channel_name)
+    if not existing_channel:
+        print(f'Creating a new channel: {channel_name}')
+        await guild.create_text_channel(channel_name)
+        await ctx.send(f'成功：{channel_name}')
 
 bot.run(jdata['TOKEN'])
