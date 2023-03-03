@@ -26,61 +26,9 @@ async def member_in(name):
 async def hi(ctx):
     await ctx.send('hi')
 
-@bot.command()
-async def channel(ctx):
-    await guild.creat_text_channel('測試',category=None)
-
-@bot.command()
-async def delete(ctx, channel: discord.TextChannel):
-    if ctx.author.guild.permissions.manage_channles:
-        await ctx.send.invoke(f"Deleted a channel named {name}")
-        await channel.delete()
-    else:
-       await ctx.send('Sorry, but you have a wrong name. Try again, but do it like this: >delete [channel name]') 
-
-
-@bot.command()
-async def createcc(ctx,name):
-    guild = ctx.guild
-    await guild.create_text_channel("{}".format(name))
+@commands()
+async def schedulein(ctx,time,obj,range):
     
-
-
-   
-
-
-
-
-
-@commands.has_permissions(administrator=True)
-@bot.command()
-async def create_new_channel(ctx, channel_name: str):
-    guild = ctx.guild
-    existing_channel = discord.utils.get(guild.channels, name=channel_name)
-    admin_role = guild.get_role(956252661970247840)
-    overwrites = {
-        guild.default_role: discord.PermissionOverwrite(view_channel=True),
-        ctx.author: discord.PermissionOverwrite(view_channel=True),
-        admin_role: discord.PermissionOverwrite(view_channel=True),
-        guild.me: discord.PermissionOverwrite(view_channel=True)
-    }
-    if not existing_channel:
-        await guild.create_text_channel(channel_name ,overwrites=overwrites)
-        await ctx.send(f'Channel {channel_name} has been created!')
-    else:
-        await ctx.send(f'Channel {channel_name} already exists!')
-
-
-
-
-@bot.command()
-async def create_channel(ctx, channel_name: str):
-    guild = ctx.guild
-    existing_channel = discord.utils.get(guild.channels, name=channel_name)
-    if not existing_channel:
-        await guild.create_text_channel(channel_name)
-        await ctx.send(f'成功：{channel_name}')
-
 
 
 
