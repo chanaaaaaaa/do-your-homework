@@ -57,6 +57,7 @@ async def 入(ctx,*args): #=schedulein 年-月-日 內容
 @bot.command()
 async def 出(ctx,*args):
     list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
+    list2=["","","","","","","","","","","","","",""]
     with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
         output=json.load(jf)
     if len(args) == 0:
@@ -69,6 +70,26 @@ async def 出(ctx,*args):
                         pass
             except(KeyError):
                 continue
+    else:
+        for i in range(0,len(list1)-1):
+            try:
+                list2[i]=args[i]
+            except(IndexError):
+                pass
+        for i in range(0,len(list2)+1):
+            try:
+                for a in range(1,20):
+                    try:
+                        await ctx.send(str(list2[i])+":"+str(output[list2[i]+str(a)]))
+                    except(KeyError):
+                        pass
+                    except(IndexError):
+                        pass
+            except(KeyError):
+                continue
+    list2.clear()
+
+
 
 
 
