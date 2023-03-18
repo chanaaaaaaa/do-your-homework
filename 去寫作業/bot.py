@@ -21,6 +21,10 @@ with open('.\setting.json', mode = 'r',encoding="utf8",newline='') as jf :
 async def on_ready():
     print("機器啟動")
 
+#偵測並刪除過時檔案
+@bot.event
+
+
 @bot.command()
 async def hi(ctx):
     await ctx.send('hi')
