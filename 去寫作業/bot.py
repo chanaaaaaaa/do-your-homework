@@ -1,11 +1,11 @@
 import discord 
 from discord.ext import commands
 import time
+import asyncio
 import datetime
 from discord.ext import tasks
-
+from datetime import datetime, timedelta
 import json
-
 import os
 import asyncio
 
@@ -16,10 +16,36 @@ with open('.\setting.json', mode = 'r',encoding="utf8",newline='') as jf :
         jdata=json.load(jf)
 
 #"科目":"科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命
-
 @bot.event
 async def on_ready():
+    check_expired_items.start()
     print("機器啟動")
+
+@tasks.loop(minutes=1)
+async def check_expired_items():
+    # 取得現在時間
+    now = datetime.datetime.now()
+    print(now)
+    # 檢查每個項目是否過期
+    for item_name, item_data in jdata.items():
+        # 如果不是時間格式，略過
+        if not isinstance(item_data, list) or len(item_data) < 3:
+            continue
+        
+        # 取得項目設定的時間
+        item_time = datetime.datetime.strptime(item_data[0], "%Y-%m-%d")
+        
+        # 如果已經過期，刪除項目
+        if (now - item_time).days >= 14:
+            jdata.pop(item_name)
+            with open("setting.json", "w", encoding="utf8") as jf:
+                json.dump(jdata, jf, ensure_ascii=False)
+            print(f"項目 {item_name} 已過期，已自動刪除")
+
+
+
+
+
 
 @bot.command()
 async def hi(ctx):
@@ -158,11 +184,6 @@ async def 設定時間(ctx,time1):
         await ctx.send("僅需輸入小時 24小時制")
 
 
-@bot.command()
-async def date(ctx):
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
-    message = f"今天是 {today}"
-    await ctx.send(message)
 
 
 bot.run(jdata["TOKEN"])
