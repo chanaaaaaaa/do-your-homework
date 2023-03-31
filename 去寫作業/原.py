@@ -4,7 +4,8 @@ import time
 import asyncio
 import datetime
 from discord.ext import tasks
-from datetime import datetime, timedelta
+import datetime
+from datetime import timedelta
 import json
 import os
 import asyncio
@@ -13,79 +14,83 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='=', intents = intents)
 
 with open('.\setting.json', mode = 'r',encoding="utf8",newline='') as jf :
-        jdata=json.load(jf)
+    output=json.load(jf)
 
 #"科目":"科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命
 @bot.event
 async def on_ready():
+    now = datetime.datetime.now()
+    print(now)
     check_expired_items.start()
     print("機器啟動")
 
 
     
 
-@tasks.loop(minutes=1)
+@tasks.loop(minutes=60)
 async def check_expired_items1():
-    # 取得現在時間
-    now = datetime.datetime.now()
-    print(now)
-    # 檢查每個項目是否過期
-    for item_name, item_data in jdata.items():
-        # 如果不是時間格式，略過
-        if not isinstance(item_data, list) or len(item_data) < 3:
+    now = datetime.date.today()# 取得現在時間
+    
+    for a in range(0,len(output)-1):
+    
+        try:
+            for i in range(1,20):
+                time=output[str(list1[a])+str(i)][0]
+                time=time.strptime(time,"%Y-%m-%d")
+                ins=output[str(list1[a])+str(i)][1]
+                num=output[str(list1[a])+str(i)][2]
+
+                if (now - time).days >=14:
+                    del output[str(list1[a])+str(i)]
+                    with open("setting.json", "w", encoding="utf8") as jf:
+                        json.dump(output, jf, ensure_ascii=False)
+                    print("項目"+ str(list1[a])+str(i) +" 已過期，已自動刪除")
+
+        except(KeyError):
             continue
-        
-        # 取得項目設定的時間
-        item_time = datetime.datetime.strptime(item_data[0], "%Y-%m-%d")
-        
-        # 如果已經過期，刪除項目
-        if (now - item_time).days >= 14:
-            jdata.pop(item_name)
-            with open("setting.json", "w", encoding="utf8") as jf:
-                json.dump(jdata, jf, ensure_ascii=False)
-            print(f"項目 {item_name} 已過期，已自動刪除")
+        except(ValueError):    
+            continue
 
 
+
+
+
+
+
+list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
 #2元陣列召喚
 #解碼target
 @tasks.loop(minutes=60)
 async def check_expired_items():
-    list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
-    with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
-        output=json.load(jf)
-    await ctx.send("科目 時間                   內容        編號")
-    # 取得現在時間
-    now = datetime.datetime.now()
-    print(now)
-    # 檢查每個項目是否過期
-    try:
-        for i in range(1,20):
-            print(input[sub+str(i)])
-    except(KeyError):
-        pass
-    for item_name, item_data in jdata.items():
-        # 如果不是時間格式，略過
-        if not isinstance(item_data, list) or len(item_data) < 3:
+    now = datetime.datetime.now()# 取得現在時間
+
+    for a in range(0,len(list1)-1):
+    
+        try:
+            for i in range(1,20):
+                tim=output[str(list1[a])+str(i)][0]
+                tim=time.strptime(tim,"%Y-%m-%d")
+                ins=output[str(list1[a])+str(i)][1]
+                num=output[str(list1[a])+str(i)][2]
+
+                if (now - tim).days >=14:
+                    del output[str(list1[a])+str(i)]
+                    with open("setting.json", "w", encoding="utf8") as jf:
+                        json.dump(output, jf, ensure_ascii=False)
+                    print("項目"+ str(list1[a])+str(i) +" 已過期，已自動刪除")
+
+        except(KeyError):
             continue
-        
-        # 取得項目設定的時間
-        item_time = datetime.datetime.strptime(item_data[0], "%Y-%m-%d")
-        
-        # 如果已經過期，刪除項目
-        if (now - item_time).days >= 14:
-       
-                with open("setting.json", "w", encoding="utf8") as jf:
-                    json.dump(jdata, jf, ensure_ascii=False)
-                print(f"項目 {item_name} 已過期，已自動刪除")
-
-
-
-
-
+        except(ValueError):    
+            continue
+    
 
 @bot.command()
 async def hi(ctx):
-    await ctx.send('hi')
+    timeout=datetime.datetime.now()
+    timeout=time.strftime("%Y-%m-%d",timeout)
+    timeout=time.strptime(timeout,"%Y-%m-%d")
+    await ctx.send(timeout)
 
 @bot.command()
 async def 入(ctx,*args): #=schedulein 年-月-日 內容
@@ -222,4 +227,4 @@ async def 設定時間(ctx,time1):
 
 
 
-bot.run(jdata["TOKEN"])
+bot.run(output["TOKEN"])
