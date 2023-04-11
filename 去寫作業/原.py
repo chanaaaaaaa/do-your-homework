@@ -9,7 +9,10 @@ from datetime import timedelta
 import json
 import os
 import asyncio
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8afea6bfe293d75f64dbbc6b4e5b37333c1f6582
 list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='=', intents = intents)
@@ -22,6 +25,7 @@ with open('.\setting.json', mode = 'r',encoding="utf8",newline='') as jf :
 async def on_ready():
     now = datetime.datetime.now()
     print(now)
+<<<<<<< HEAD
 
     #預設channel ID
     with open("setting.json", "w", encoding="utf8") as jf:
@@ -36,6 +40,53 @@ async def on_ready():
 @tasks.loop(minutes=60)
 async def check_expired_items3():
     now = datetime.datetime.now()
+=======
+    check_expired_items3.start()
+    print("機器啟動")
+
+@tasks.loop(minutes=60)
+async def check_expired_items3():
+    now = datetime.datetime.now()
+
+    for a in range(0, len(list1)-1):
+        try:
+            for i in range(1, 20):
+                item = output.get(str(list1[a])+str(i))
+                if not item:
+                    continue
+                
+                tim = item[0]
+                ins = item[1]
+                num = item[2]
+
+                try:
+                    tim = datetime.datetime.strptime(tim, "%Y-%m-%d")
+                except ValueError:
+                    continue
+
+                if (now - tim).days >= 14:
+                    del output[str(list1[a])+str(i)]
+                    with open("setting.json", "w", encoding="utf8") as jf:
+                        json.dump(output, jf, ensure_ascii=False)
+                    print(f"項目 {list1[a]}{i} 已過期，已自動刪除")
+                    await check_expired_items3.send(f"項目 {list1[a]}{i} 已過期，已自動刪除")
+        except Exception as e:
+            print(f"處理項目 {list1[a]} 時發生錯誤：{e}")
+
+
+@tasks.loop(minutes=60)
+async def check_expired_items1():
+    now = datetime.date.today()# 取得現在時間
+    
+    for a in range(0,len(output)-1):
+    
+        try:
+            for i in range(1,20):
+                tim=output[str(list1[a])+str(i)][0]
+                tim=time.strptime(tim,"%Y-%m-%d")
+                ins=output[str(list1[a])+str(i)][1]
+                num=output[str(list1[a])+str(i)][2]
+>>>>>>> 8afea6bfe293d75f64dbbc6b4e5b37333c1f6582
 
     for a in range(0, len(list1)-1):
         try:
