@@ -26,6 +26,8 @@ async def on_ready():
     check_expired_items3.start()
     print("機器啟動")
 
+
+
 @tasks.loop(minutes=60)
 async def check_expired_items3():
     list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
@@ -58,6 +60,7 @@ async def check_expired_items3():
 
     await asyncio.sleep(10)
 
+
 @bot.command()
 async def idget(ctx):
     await ctx.send("取得成功")
@@ -85,7 +88,7 @@ async def hi(ctx):
     await ctx.send(timout)
 
 @bot.command()
-async def 入(ctx,*args): #=schedulein 年-月-日 內容
+async def add(ctx,*args): #=schedulein 年-月-日 內容
     with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
         input=json.load(jf)
 
@@ -119,7 +122,7 @@ async def 入(ctx,*args): #=schedulein 年-月-日 內容
             await ctx.send("科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命"+"\n格式為 時間 科目 內容")
 
 @bot.command()
-async def 出(ctx,*args):
+async def print(ctx,*args):
     list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
     list2=["","","","","","","","","","","","","",""]
     with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
@@ -158,7 +161,7 @@ async def 出(ctx,*args):
                 continue
 
 @bot.command()
-async def 刪(ctx,*args): # =刪...... 奇數項為科目 偶數項為代號
+async def delete(ctx,*args): # =刪...... 奇數項為科目 偶數項為代號
     sbjError=False
     list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
     list2=["","","","","","","","","","","","","",""]
@@ -171,7 +174,10 @@ async def 刪(ctx,*args): # =刪...... 奇數項為科目 偶數項為代號
     if len(args) == 0:
         await ctx.send("你想刪除什麼")
     if len(args)%2 != 0:
-        await ctx.send("是不是漏了什麼")
+        await ctx.send("想要刪除的項目編號呢")
+    if len(args) >= 14:
+        await ctx.send("超出上限")
+        return
     else:
         for i in range(0,len(args)):
             try:
@@ -199,21 +205,22 @@ async def 刪(ctx,*args): # =刪...... 奇數項為科目 偶數項為代號
         await ctx.send("科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命")
 
 
-@bot.command()
-async def 設定時間(ctx,time1):
+#@bot.command()
+#async def settime(ctx,time1):
 
-    if output["channelID"] == "" :
-        await ctx.send("記得要設定一個頻道讓機器人發送定時訊息喔")
-
-    with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
-        input=json.load(jf)
-    try:
-        input["time"]=time.strftime("%H",time.strptime(time1,"%H"))
-        with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
-            json.dump(input,jf,indent=10,ensure_ascii=False)
-        await ctx.send("時間設定完成 為"+ time1 +"時")
-    except(ValueError):
-        await ctx.send("僅需輸入小時 24小時制")
+#    if output["channelID"] == "" :
+#        await ctx.send("記得要設定一個頻道讓機器人發送定時訊息喔")
+#    if time1 == ():
+#        await ctx.send("此命令用意為")
+#    with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
+#        input=json.load(jf)
+#    try:
+#        input["time"]=time.strftime("%H",time.strptime(time1,"%H"))
+#        with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
+#            json.dump(input,jf,indent=10,ensure_ascii=False)
+#        await ctx.send("時間設定完成 為"+ time1 +"時")
+#    except(ValueError):
+#        await ctx.send("僅需輸入小時 24小時制")
 
 
 
