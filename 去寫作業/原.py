@@ -54,16 +54,27 @@ async def check_expired_items3():
                     with open("setting.json", "w", encoding="utf8") as jf:
                         json.dump(output, jf, ensure_ascii=False)
                     print(f"項目 {list1[a]}{i} 已過期，已自動刪除")
-                    await bot.get_channel(output["channelID"]).send(f"項目 {list1[a]}{i} 已過期，已自動刪除")
+
+                    embed=discord.Embed(title="刪除",
+                            description=f"項目 {list1[a]} 編號{i} 已過期，已自動刪除",
+                            color=0xFF5733
+                            )      
+                    await bot.get_channel(output["channelID"]).send(embed=embed)
+
         except Exception as e:
             print(f"處理項目 {list1[a]} 時發生錯誤：{e}")
 
     await asyncio.sleep(10)
 
 
+
 @bot.command()
 async def idget(ctx):
-    await ctx.send("取得成功")
+    embed=discord.Embed(title="成功",
+                        description="取得成功",
+                        color=0x109319
+                        )
+    await ctx.send(embed=embed)
     output["channelID"]= ctx.channel.id
 
     with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
@@ -71,21 +82,23 @@ async def idget(ctx):
 
 
 
-
-
-
-
-
 @bot.command()
 async def hi(ctx):
 
     if output["channelID"] == "" :
-        await ctx.send("記得要設定一個頻道讓機器人發送定時訊息喔")
+        embed=discord.Embed(title="提醒",
+                            description="記得要設定頻道ID!",
+                            color=0xFF5733
+                            )
+        await ctx.send(embed=embed)
 
-    timout=datetime.datetime.now()
-    timout=time.strftime("%Y-%m-%d",timout)
-    timout=time.strptime(timout,"%Y-%m-%d")
-    await ctx.send(timout)
+    embed=discord.Embed(title="成功",
+                            description="測試成功",
+                            color=0xFF5733
+                            )
+    await ctx.send(embed=embed)
+
+
 
 @bot.command()
 async def add(ctx,*args): #=schedulein 年-月-日 內容
@@ -93,11 +106,20 @@ async def add(ctx,*args): #=schedulein 年-月-日 內容
         input=json.load(jf)
 
         if input["channelID"] == "" :
-            await ctx.send("記得要設定一個頻道讓機器人發送定時訊息喔")
+            embed=discord.Embed(title="提醒",
+                                description="記得要設定頻道ID!",
+                                color=0xFF5733
+                                )
+            await ctx.send(embed=embed)
 
         if len(args) !=3:
-            await ctx.send("輸入格式為 年-月-日 科目 內容")
+            embed=discord.Embed(title="錯誤",
+                                description="輸入格式為 年-月-日 科目 內容",
+                                color=0xFF5733
+                                )
+            await ctx.send(embed=embed)
             return
+
         timein=args[0]
         sub=args[1]
         ins=args[2]
@@ -113,36 +135,76 @@ async def add(ctx,*args): #=schedulein 年-月-日 內容
                     input[sub+str(i)]=target,(ins),i
                     with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
                         json.dump(input,jf,indent=10,ensure_ascii=False)
-                    await ctx.send(str(sub)+" "+str(ins)+" 加入成功 編號為:"+str(i))
+
+                    embed=discord.Embed(title="成功",
+                                        description= str(sub)+" "+str(ins)+" 加入成功 編號為:"+str(i),
+                                        color=0x109319
+                                        )
+                    await ctx.send(embed=embed)
+
                 except(ValueError):
-                    await ctx.send("日期 為 YYYY-MM-DD")
+                    embed=discord.Embed(title="錯誤",
+                                        description="日期 為 YYYY-MM-DD",
+                                        color=0xFF5733
+                                        )
+                    await ctx.send(embed=embed)
             else:
-                await ctx.send("科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命"+"\n格式為 時間 科目 內容")
+                embed=discord.Embed(title="錯誤",
+                                    description="科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命"+"\n格式為 時間 科目 內容",
+                                    color=0xFF5733
+                                    )
+                await ctx.send(embed=embed)
         else:
-            await ctx.send("科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命"+"\n格式為 時間 科目 內容")
+            embed=discord.Embed(title="錯誤",
+                                    description="科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命"+"\n格式為 時間 科目 內容",
+                                    color=0xFF5733
+                                    )
+            await ctx.send(embed=embed)
+
+
 
 @bot.command()
-async def print(ctx,*args):
+async def pr(ctx,*args):
     list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
     list2=["","","","","","","","","","","","","",""]
     with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
         output=json.load(jf)
 
         if output["channelID"] == "" :
-            await ctx.send("記得要設定一個頻道讓機器人發送定時訊息喔")
+            embed=discord.Embed(title="提醒",
+                                description="記得要設定頻道ID!",
+                                color=0xFF5733
+                                )
+            await ctx.send(embed=embed)
 
-    await ctx.send("科目 時間                   內容        編號")
     if len(args) == 0:
+
+        embed=discord.Embed(title="全部行程",
+                            description="科目 - 時間 - 內容 - 編號",
+                            color=0x109319
+                            )
+
         for i in range(0,len(list1)-1):
             try:
                 for a in range(1,20):
                     try:
-                        await ctx.send(str(list1[i])+":"+str(output[list1[i]+str(a)]))
+                        embed.add_field(name=str(list1[i]),
+                                        value=str(output[list1[i]+str(a)]),
+                                        inline=False
+                                        )
                     except(KeyError):
                         pass
             except(KeyError):
                 continue
+        await ctx.send(embed=embed)
+
     else:
+
+        embed=discord.Embed(title="已選定行程",
+                            description="科目 - 時間 - 內容 - 編號",
+                            color=0x109319
+                            )
+
         for i in range(0,len(list1)-1):
             try:
                 list2[i]=args[i]
@@ -152,32 +214,54 @@ async def print(ctx,*args):
             try:
                 for a in range(1,20):
                     try:
-                        await ctx.send(str(list2[i])+":"+str(output[list2[i]+str(a)]))
+                        embed.add_field(name=str(list2[i]),
+                                        value=str(output[list2[i]+str(a)]),
+                                        inline=False
+                                        )
                     except(KeyError):
                         pass
                     except(IndexError):
                         pass
             except(KeyError):
                 continue
+        await ctx.send(embed=embed)   
+
+
 
 @bot.command()
 async def delete(ctx,*args): # =刪...... 奇數項為科目 偶數項為代號
-    sbjError=False
     list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
     list2=["","","","","","","","","","","","","",""]
     with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
         output=json.load(jf)
 
     if output["channelID"] == "" :
-        await ctx.send("記得要設定一個頻道讓機器人發送定時訊息喔")
+        embed=discord.Embed(title="提醒",
+                            description="記得要設定頻道ID!",
+                            color=0xFF5733
+                            )
+        await ctx.send(embed=embed)
 
     if len(args) == 0:
-        await ctx.send("你想刪除什麼")
+        embed=discord.Embed(title="錯誤",
+                            description="你想刪除什麼",
+                            color=0xFF5733
+                            )
+        await ctx.send(embed=embed)
     if len(args)%2 != 0:
-        await ctx.send("想要刪除的項目編號呢")
+        embed=discord.Embed(title="錯誤",
+                            description="想要刪除的項目編號呢",
+                            color=0xFF5733
+                            )
+        await ctx.send(embed=embed)
     if len(args) >= 14:
-        await ctx.send("超出上限")
+        embed=discord.Embed(title="錯誤",
+                            description="超出上限",
+                            color=0xFF5733
+                            )
+        await ctx.send(embed=embed)
         return
+
     else:
         for i in range(0,len(args)):
             try:
@@ -187,23 +271,33 @@ async def delete(ctx,*args): # =刪...... 奇數項為科目 偶數項為代號
         try:
             for i in range(0,len(list2)+2,2):
                 if list2[i] not in list1 and list2[i] != "" :
-                    await ctx.send(list2[i]+" 科目錯誤")
-                    sbjError=True
+                    embed=discord.Embed(title="錯誤",
+                                        description=list2[i]+" 科目錯誤"+"\n科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命",
+                                        color=0xFF5733
+                                        )
+                    await ctx.send(embed=embed)
                     continue
+
                 if (str(list2[i])+str(list2[i+1])) in output :
                     del output[str(list2[i])+str(list2[i+1])]
-                    await ctx.send(str(list2[i])+str(list2[i+1])+" 刪除成功")
+                    embed=discord.Embed(title="成功",
+                                        description=str(list2[i])+str(list2[i+1])+" 刪除成功",
+                                        color=0x109319
+                                        )
+                    await ctx.send(embed=embed)                    
                     with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
                         json.dump(output,jf,indent=10,ensure_ascii=False)
                         continue  
                 if (str(list2[i])+str(list2[i+1])) not in output and list2[i] != "" :
-                    await ctx.send(str(list2[i])+str(list2[i+1])+" 不存在")
+                    embed=discord.Embed(title="錯誤",
+                                        description=list2[i]+str(list2[i])+str(list2[i+1])+" 不存在",
+                                        color=0xFF5733
+                                        )
+                    await ctx.send(embed=embed)
                     continue                            
         except(IndexError):
             pass
-    if sbjError == True :
-        await ctx.send("科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命")
-
+    
 
 #@bot.command()
 #async def settime(ctx,time1):
