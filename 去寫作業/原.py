@@ -457,7 +457,7 @@ class button(Button):
         except(KeyError):
             pass
 
-        embed=discord.Embed(title="確認加入",
+        embed=discord.Embed(title="確認是否加入 超過10秒自動加入",
                             description=(str(self.label)+"科 "+str(timeout.content)+"截止 內容為"+str(ins.content)+" 編號為"+str(i)),
                             color=0x109319
                             )
@@ -465,7 +465,10 @@ class button(Button):
 
         button1 = Button(label = "確認")
         async def button_callback(interaction):
-            
+            embed=discord.Embed(title="加入成功",
+                                description=(str(self.label)+"科 "+str(timeout.content)+"截止 內容為"+str(ins.content)+" 編號為"+str(i)+" 加入成功"),
+                                color=0x109319
+                                )
             input[str(self.label)+str(i)]=target,str(ins.content),i
             with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
                 json.dump(input,jf,indent=10,ensure_ascii=False)
@@ -491,6 +494,15 @@ class button(Button):
         view.add_item(button1)
         view.add_item(button2)
         await interaction.channel.send(embed=embed , view=view)
+        try:
+            interaction = await bot.wait_for("button_click", timeout=10)
+        except asyncio.TimeoutError:
+                embed=discord.Embed(title="加入成功",
+                                description=(str(self.label)+"科 "+str(timeout.content)+"截止 內容為"+str(ins.content)+" 編號為"+str(i)+" 加入成功"),
+                                color=0x109319
+                                )
+                await interaction.channel.send(embed=embed)
+                return
         
 
 @bot.command()
