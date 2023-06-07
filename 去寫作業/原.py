@@ -9,7 +9,7 @@ from datetime import timedelta
 import json
 import os
 import asyncio
-
+from discord.ui import Button, View
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='=', intents = intents)
@@ -101,7 +101,7 @@ async def hi(ctx):
 
 
 @bot.command()
-async def add(ctx,*args): #=schedulein 年-月-日 內容
+async def add1(ctx,*args): #=schedulein 年-月-日 內容
     with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
         input=json.load(jf)
 
@@ -178,12 +178,10 @@ async def pr(ctx,*args):
             await ctx.send(embed=embed)
 
     if len(args) == 0:
-
         embed=discord.Embed(title="全部行程",
                             description="科目 - 時間 - 內容 - 編號",
                             color=0x109319
                             )
-
         for i in range(0,len(list1)-1):
             try:
                 for a in range(1,20):
@@ -199,12 +197,10 @@ async def pr(ctx,*args):
         await ctx.send(embed=embed)
 
     else:
-
         embed=discord.Embed(title="已選定行程",
                             description="科目 - 時間 - 內容 - 編號",
                             color=0x109319
                             )
-
         for i in range(0,len(list1)-1):
             try:
                 list2[i]=args[i]
@@ -298,6 +294,248 @@ async def delete(ctx,*args): # =刪...... 奇數項為科目 偶數項為代號
         except(IndexError):
             pass
     
+
+
+
+
+
+class button1(Button):
+    def __init__(self,label):
+        super().__init__(label=label)
+
+    async def callback(self,interaction):
+        
+        embed=discord.Embed(title="科目",
+                            description="你選擇的科目是:"+str(self.label),
+                            color=0x109319
+                            )
+        await interaction.response.edit_message(embed=embed)
+
+
+        await interaction.channel.send("請輸入科目內容:") 
+        await asyncio.sleep(1)
+        
+        try:
+            ins = await bot.wait_for("message", timeout=20)        
+        except asyncio.TimeoutError:
+            embed=discord.Embed(title="超時",
+                                description="操作逾時",
+                                color=0xFF5733
+                                )
+            await interaction.channel.send(embed=embed)
+            return
+
+        embed=discord.Embed(title="內容",
+                            description="內容為:"+str(ins.content),
+                            color=0x109319
+                            )
+        await interaction.channel.send(embed=embed)
+
+
+        timeError = True
+        await interaction.channel.send("請輸入科目截止時間:")
+        await asyncio.sleep(1)
+        while timeError == True:
+
+            try:
+                timeout = await bot.wait_for("message", timeout=20)
+            except asyncio.TimeoutError:
+                embed=discord.Embed(title="超時",
+                                description="操作逾時",
+                                color=0xFF5733
+                                )
+                await interaction.channel.send(embed=embed)
+                return
+
+            try:
+                target=time.strftime("%Y-%m-%d",time.strptime(str(timeout.content),"%Y-%m-%d"))
+                timeError = False
+            except(ValueError):
+                embed=discord.Embed(title="錯誤 請重試",
+                                    description="日期 為 YYYY-MM-DD",
+                                    color=0xFF5733
+                                    )
+                await interaction.channel.send(embed=embed)
+
+        embed=discord.Embed(title="截止時間",
+                            description="截止時間為:"+str(timeout.content),
+                            color=0x109319
+                            )
+        await interaction.channel.send(embed=embed)
+
+        with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
+            input=json.load(jf)
+
+        try:
+            for i in range(1,20):
+                print(input[str(self.label)+str(i)])
+        except(KeyError):
+            pass
+
+        input[str(self.label)+str(i)]=target,str(ins.content),i
+        with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
+            json.dump(input,jf,indent=10,ensure_ascii=False)
+
+        embed=discord.Embed(title="加入",
+                            description=(str(self.label)+"科 "+str(timeout.content)+"截止 內容為"+str(ins.content)+" 編號為"+str(i)+" 加入成功!"),
+                            color=0x109319
+                            )
+        await interaction.channel.send(embed=embed)
+
+
+
+class button(Button):
+    def __init__(self,label):
+        super().__init__(label=label)
+
+    async def callback(self,interaction):
+        
+        embed=discord.Embed(title="科目",
+                            description="你選擇的科目是:"+str(self.label),
+                            color=0x109319
+                            )
+        await interaction.response.edit_message(embed=embed)
+
+
+        await interaction.channel.send("請輸入科目內容:") 
+        await asyncio.sleep(1)
+        
+        try:
+            ins = await bot.wait_for("message", timeout=20)        
+        except asyncio.TimeoutError:
+            embed=discord.Embed(title="超時",
+                                description="操作逾時",
+                                color=0xFF5733
+                                )
+            await interaction.channel.send(embed=embed)
+            return
+
+        embed=discord.Embed(title="內容",
+                            description="內容為:"+str(ins.content),
+                            color=0x109319
+                            )
+        await interaction.channel.send(embed=embed)
+
+
+        timeError = True
+        await interaction.channel.send("請輸入科目截止時間:")
+        await asyncio.sleep(1)
+        while timeError == True:
+
+            try:
+                timeout = await bot.wait_for("message", timeout=20)
+            except asyncio.TimeoutError:
+                embed=discord.Embed(title="超時",
+                                description="操作逾時",
+                                color=0xFF5733
+                                )
+                await interaction.channel.send(embed=embed)
+                return
+
+            try:
+                target=time.strftime("%Y-%m-%d",time.strptime(str(timeout.content),"%Y-%m-%d"))
+                timeError = False
+            except(ValueError):
+                embed=discord.Embed(title="錯誤 請重試",
+                                    description="日期 為 YYYY-MM-DD",
+                                    color=0xFF5733
+                                    )
+                await interaction.channel.send(embed=embed)
+
+        embed=discord.Embed(title="截止時間",
+                            description="截止時間為:"+str(timeout.content),
+                            color=0x109319
+                            )
+        await interaction.channel.send(embed=embed)
+
+
+        with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
+            input=json.load(jf)
+        try:
+            for i in range(1,20):
+                print(input[str(self.label)+str(i)])
+        except(KeyError):
+            pass
+
+        embed=discord.Embed(title="確認加入",
+                            description=(str(self.label)+"科 "+str(timeout.content)+"截止 內容為"+str(ins.content)+" 編號為"+str(i)),
+                            color=0x109319
+                            )
+
+
+        button1 = Button(label = "確認")
+        async def button_callback(interaction):
+            
+            input[str(self.label)+str(i)]=target,str(ins.content),i
+            with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
+                json.dump(input,jf,indent=10,ensure_ascii=False)
+            view.remove_item(button1)
+            view.remove_item(button2)
+            await interaction.response.edit_message(embed=embed , view=view)
+            return
+        button1.callback = button_callback
+
+        button2 = Button(label = "取消")
+        async def button_callback(interaction):
+            embed=discord.Embed(title="取消加入",
+                                description="取消成功!",
+                                color=0x109319
+                                )
+            view.remove_item(button1)
+            view.remove_item(button2)
+            await interaction.response.edit_message(embed=embed , view=view)
+            return
+        button2.callback = button_callback
+
+        view = View()
+        view.add_item(button1)
+        view.add_item(button2)
+        await interaction.channel.send(embed=embed , view=view)
+        
+
+@bot.command()
+async def hello(ctx):
+
+    global channelID 
+    channelUD =  ctx.channel.id
+
+    button1 = button("國文")
+    button2 = button("英文")
+    button3 = button("數學")
+    button4 = button("物理")
+    button5 = button("化學")
+    button6 = button("生物")
+    button7 = button("地科")
+    button8 = button("地理")
+    button9 = button("歷史")
+    button10 = button("公民")
+    button11 = button("美術")
+    button12 = button("國防")
+    button13 = button("新莊")
+    button14 = button("生命")
+
+    view = View()
+    view.add_item(button1)
+    view.add_item(button2)
+    view.add_item(button3)
+    view.add_item(button4)
+    view.add_item(button5)
+    view.add_item(button6)
+    view.add_item(button7)
+    view.add_item(button8)
+    view.add_item(button9)
+    view.add_item(button10)
+    view.add_item(button11)
+    view.add_item(button12)
+    view.add_item(button13)
+    view.add_item(button14)
+    await ctx.send("choose",view=view)
+    
+
+
+
+
+
 
 #@bot.command()
 #async def settime(ctx,time1):
