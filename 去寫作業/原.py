@@ -7,7 +7,7 @@ from discord.ext import tasks
 import datetime
 from datetime import timedelta
 import json
-import os
+import os , sys
 import asyncio
 from discord.ui import Button, View
 
@@ -17,7 +17,8 @@ bot = commands.Bot(command_prefix='=', intents = intents)
 with open('.\setting.json', mode = 'r',encoding="utf8",newline='') as jf :
     output=json.load(jf)
 
-#"科目":"科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命
+#"科目設定" "全部"為pri預設 無需增加
+list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
 @bot.event
 async def on_ready():
     now = datetime.datetime.now()
@@ -30,7 +31,7 @@ async def on_ready():
 
 @tasks.loop(minutes=60)
 async def check_expired_items3():
-    list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
+
     now = datetime.datetime.now()
 
     for a in range(0, len(list1)-1):
@@ -101,71 +102,8 @@ async def hi(ctx):
 
 
 @bot.command()
-async def add1(ctx,*args): #=schedulein 年-月-日 內容
-    with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
-        input=json.load(jf)
-
-        if input["channelID"] == "" :
-            embed=discord.Embed(title="提醒",
-                                description="記得要設定頻道ID!",
-                                color=0xFF5733
-                                )
-            await ctx.send(embed=embed)
-
-        if len(args) !=3:
-            embed=discord.Embed(title="錯誤",
-                                description="輸入格式為 年-月-日 科目 內容",
-                                color=0xFF5733
-                                )
-            await ctx.send(embed=embed)
-            return
-
-        timein=args[0]
-        sub=args[1]
-        ins=args[2]
-        if "國文"or"英文"or"數學"or"物理"or"化學"or"生物"or"地科"or"地理"or"歷史"or"公民"or"美術"or"國防"or"生命"or"新莊"in sub:
-            if len(sub)==2:
-                try:
-                    for i in range(1,20):
-                        print(input[sub+str(i)])
-                except(KeyError):
-                    pass
-                try:
-                    target=time.strftime("%Y-%m-%d",time.strptime(timein,"%Y-%m-%d"))
-                    input[sub+str(i)]=target,(ins),i
-                    with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
-                        json.dump(input,jf,indent=10,ensure_ascii=False)
-
-                    embed=discord.Embed(title="成功",
-                                        description= str(sub)+" "+str(ins)+" 加入成功 編號為:"+str(i),
-                                        color=0x109319
-                                        )
-                    await ctx.send(embed=embed)
-
-                except(ValueError):
-                    embed=discord.Embed(title="錯誤",
-                                        description="日期 為 YYYY-MM-DD",
-                                        color=0xFF5733
-                                        )
-                    await ctx.send(embed=embed)
-            else:
-                embed=discord.Embed(title="錯誤",
-                                    description="科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命"+"\n格式為 時間 科目 內容",
-                                    color=0xFF5733
-                                    )
-                await ctx.send(embed=embed)
-        else:
-            embed=discord.Embed(title="錯誤",
-                                    description="科目為 國文or英文or數學or物理or化學or生物or地科or地理or歷史or公民or美術or國防or新莊or生命"+"\n格式為 時間 科目 內容",
-                                    color=0xFF5733
-                                    )
-            await ctx.send(embed=embed)
-
-
-
-@bot.command()
-async def pr(ctx,*args):
-    list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
+async def pr1(ctx,*args):
+    
     list2=["","","","","","","","","","","","","",""]
     with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
         output=json.load(jf)
@@ -226,7 +164,7 @@ async def pr(ctx,*args):
 
 @bot.command()
 async def delete(ctx,*args): # =刪...... 奇數項為科目 偶數項為代號
-    list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命"]
+    
     list2=["","","","","","","","","","","","","",""]
     with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
         output=json.load(jf)
@@ -384,7 +322,7 @@ class button1(Button):
 
 
 
-class button(Button):
+class button_add(Button):
     def __init__(self,label):
         super().__init__(label=label)
 
@@ -408,7 +346,6 @@ class button(Button):
                                 color=0xFF5733
                                 )
             await interaction.channel.send(embed=embed)
-            return
 
         embed=discord.Embed(title="內容",
                             description="內容為:"+str(ins.content),
@@ -430,7 +367,6 @@ class button(Button):
                                 color=0xFF5733
                                 )
                 await interaction.channel.send(embed=embed)
-                return
 
             try:
                 target=time.strftime("%Y-%m-%d",time.strptime(str(timeout.content),"%Y-%m-%d"))
@@ -475,7 +411,7 @@ class button(Button):
             view.remove_item(button1)
             view.remove_item(button2)
             await interaction.response.edit_message(embed=embed , view=view)
-            return
+            exit
         button1.callback = button_callback
 
         button2 = Button(label = "取消")
@@ -487,7 +423,7 @@ class button(Button):
             view.remove_item(button1)
             view.remove_item(button2)
             await interaction.response.edit_message(embed=embed , view=view)
-            return
+            exit
         button2.callback = button_callback
 
         view = View()
@@ -497,74 +433,174 @@ class button(Button):
         try:
             interaction = await bot.wait_for("button_click", timeout=10)
         except asyncio.TimeoutError:
-                embed=discord.Embed(title="加入成功",
+            embed=discord.Embed(title="加入成功",
                                 description=(str(self.label)+"科 "+str(timeout.content)+"截止 內容為"+str(ins.content)+" 編號為"+str(i)+" 加入成功"),
                                 color=0x109319
                                 )
-                await interaction.channel.send(embed=embed)
-                return
+            await interaction.channel.send(embed=embed)
+            exit
         
 
 @bot.command()
-async def hello(ctx):
-
-    global channelID 
-    channelUD =  ctx.channel.id
-
-    button1 = button("國文")
-    button2 = button("英文")
-    button3 = button("數學")
-    button4 = button("物理")
-    button5 = button("化學")
-    button6 = button("生物")
-    button7 = button("地科")
-    button8 = button("地理")
-    button9 = button("歷史")
-    button10 = button("公民")
-    button11 = button("美術")
-    button12 = button("國防")
-    button13 = button("新莊")
-    button14 = button("生命")
+async def add(ctx):
 
     view = View()
-    view.add_item(button1)
-    view.add_item(button2)
-    view.add_item(button3)
-    view.add_item(button4)
-    view.add_item(button5)
-    view.add_item(button6)
-    view.add_item(button7)
-    view.add_item(button8)
-    view.add_item(button9)
-    view.add_item(button10)
-    view.add_item(button11)
-    view.add_item(button12)
-    view.add_item(button13)
-    view.add_item(button14)
+
+    for i in range(len(list1)):
+        button = button_add(str(list1[i-1]))
+        view.add_item(button)
     await ctx.send("choose",view=view)
     
 
 
 
+@bot.command()
+async def pri(ctx):
+
+    view = View()
+
+    for i in range(len(list1)):
+        button = button_pri(str(list1[i-1]))
+        view.add_item(button)
+
+    button = Button(label="全部")
+    async def button_callback(interaction):
+        embed=discord.Embed(title="科目",
+                            description="你選擇的科目是:全部",
+                            color=0x109319
+                            )
+        await interaction.response.edit_message(embed=embed)
+
+        with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
+            output=json.load(jf)
+
+        embed=discord.Embed(title="全部",
+                            description="科目 - 時間 - 內容 - 編號",
+                            color=0x109319
+                            )
+        for i in range(0,len(list1)-1):
+            try:
+                for a in range(1,20):
+                    try:
+                        embed.add_field(name=str(list1[i]),
+                                        value=str(output[list1[i]+str(a)]),
+                                        inline=False
+                                        )
+                    except(KeyError):
+                        pass
+            except(KeyError):
+                continue
+        await interaction.channel.send(embed=embed)
+        exit
+    button.callback = button_callback
+
+    view.add_item(button)
+
+    await ctx.send("choose",view=view)
 
 
 
-#@bot.command()
-#async def settime(ctx,time1):
 
-#    if output["channelID"] == "" :
-#        await ctx.send("記得要設定一個頻道讓機器人發送定時訊息喔")
-#    if time1 == ():
-#        await ctx.send("此命令用意為")
-#    with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
-#        input=json.load(jf)
-#    try:
-#        input["time"]=time.strftime("%H",time.strptime(time1,"%H"))
-#        with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
-#            json.dump(input,jf,indent=10,ensure_ascii=False)
-#        await ctx.send("時間設定完成 為"+ time1 +"時")
-#    except(ValueError):
-#        await ctx.send("僅需輸入小時 24小時制")
+class button_pri(Button):
+    def __init__(self,label):
+        super().__init__(label=label)
+
+    async def callback(self,interaction):
+        
+        embed=discord.Embed(title="科目",
+                            description="你選擇的科目是:"+str(self.label),
+                            color=0x109319
+                            )
+        await interaction.response.edit_message(embed=embed)
+
+
+        with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
+            output=json.load(jf)
+
+        embed=discord.Embed(title="已選定科目:"+(self.label),
+                            description="科目 - 時間 - 內容 - 編號",
+                            color=0x109319
+                            )
+        
+        
+        for a in range(1,20):
+            try:
+                embed.add_field(name=str(self.label),
+                                value=str(output[str(self.label)+str(a)]),
+                                inline=False
+                                )
+            except(KeyError):
+                if a == 1:
+                    embed.add_field(name=str(self.label),
+                                value="無紀錄",
+                                inline=False
+                                )
+                pass
+            except(IndexError):
+                pass
+        
+        await interaction.channel.send(embed=embed)
+
+
+
+@bot.command()
+async def pr(ctx,*args):
+    list1=["國文","英文","數學","物理","化學","生物","地科","地理","歷史","公民","美術","國防","新莊","生命","全部"]
+    list2=["","","","","","","","","","","","","",""]
+    with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
+        output=json.load(jf)
+
+        if output["channelID"] == "" :
+            embed=discord.Embed(title="提醒",
+                                description="記得要設定頻道ID!",
+                                color=0xFF5733
+                                )
+            await ctx.send(embed=embed)
+
+    if len(args) == 0:
+        embed=discord.Embed(title="全部行程",
+                            description="科目 - 時間 - 內容 - 編號",
+                            color=0x109319
+                            )
+        for i in range(0,len(list1)-1):
+            try:
+                for a in range(1,20):
+                    try:
+                        embed.add_field(name=str(list1[i]),
+                                        value=str(output[list1[i]+str(a)]),
+                                        inline=False
+                                        )
+                    except(KeyError):
+                        pass
+            except(KeyError):
+                continue
+        await ctx.send(embed=embed)
+
+    else:
+        embed=discord.Embed(title="已選定行程",
+                            description="科目 - 時間 - 內容 - 編號",
+                            color=0x109319
+                            )
+        for i in range(0,len(list1)-1):
+            try:
+                list2[i]=args[i]
+            except(IndexError):
+                pass
+        for i in range(0,len(list2)):
+            try:
+                for a in range(1,20):
+                    try:
+                        embed.add_field(name=str(list2[i]),
+                                        value=str(output[list2[i]+str(a)]),
+                                        inline=False
+                                        )
+                    except(KeyError):
+                        pass
+                    except(IndexError):
+                        pass
+            except(KeyError):
+                continue
+        await ctx.send(embed=embed) 
 
 
 
