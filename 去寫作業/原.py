@@ -24,6 +24,8 @@ async def on_ready():
     now = datetime.datetime.now()
     print(now)
 
+    output["channelID"] =" "
+
     check_expired_items3.start()
     print("機器啟動")
 
@@ -68,11 +70,10 @@ async def check_expired_items3():
 
 @bot.command()
 async def hello(ctx):
-
     embed=discord.Embed(title="主頁",
-                            description="這是一個目的為替代聯絡簿的機器人",
-                            color=0x109319
-                            )
+                        description="這是一個目的為替代聯絡簿的機器人",
+                        color=0x109319
+                        )
     embed.set_author(name="吳瑞宸 盧宣嘉")
 
     if output["channelID"] == "" :
@@ -84,9 +85,9 @@ async def hello(ctx):
     view = View()
 
     button1 = button_idget("idget")
-    button2 = button_add_add("add")
-    button3 = button_pri_add("pri")
-    button4 = button_del_add("del")
+    button2 = button_add_add("add",discord.ButtonStyle.green)
+    button3 = button_pri_add("pri",discord.ButtonStyle.blurple)
+    button4 = button_del_add("del",discord.ButtonStyle.red)
 
     view.add_item(button1)
     view.add_item(button2)
@@ -106,7 +107,7 @@ class button_idget(Button):
                             color=0x109319
                             )
 
-        output["channelID"]= ctx.channel.id
+        output["channelID"]= interaction.channel.id
 
         with open('.\setting.json', mode = 'w',encoding="utf-8",newline='') as jf :
             json.dump(output,jf,indent=10,ensure_ascii=False)
@@ -235,8 +236,8 @@ class button_add(Button):
                 return
              
 class button_add_add(Button):
-    def __init__(self,label):
-        super().__init__(label=label)
+    def __init__(self,label,style):
+        super().__init__(label=label,style=style)
 
     async def callback(self,interaction):
 
@@ -250,8 +251,8 @@ class button_add_add(Button):
 
 
 class button_pri_add(Button):
-    def __init__(self,label):
-        super().__init__(label=label)
+    def __init__(self,label,style):
+        super().__init__(label=label,style=style)
 
     async def callback(self,interaction):
 
@@ -326,37 +327,9 @@ class button_pri(Button):
         await interaction.response.send_message(embed=embed)
         
 
-
-
-
-
-
-@bot.command()
-async def dele(ctx):
-
-    view = View()
-
-    with open('.\setting.json', mode = 'r',encoding="utf-8",newline='') as jf :
-        output=json.load(jf)
-
-
-    for i in range(len(list1)):
-
-        for a in range(1,20):
-            try:
-                button = button_del(str(list1[i])+str(output[list1[i]+str(a)]))
-                view.add_item(button)
-            except (KeyError) :
-                pass
-            except (IndexError):
-                pass
-
-    await ctx.send("choose",view=view)
-
-
 class button_del_add(Button):
-    def __init__(self,label):
-        super().__init__(label=label)
+    def __init__(self,label,style):
+        super().__init__(label=label,style=style)
 
     async def callback(self,interaction):
 
@@ -449,5 +422,35 @@ class button_del(Button):
         await interaction.response.defer()
         
 
+
+@bot.command()
+async def clean(ctx):
+    await ctx.channel.purge()
+
+    embed=discord.Embed(title="主頁",
+                        description="這是一個目的為替代聯絡簿的機器人",
+                        color=0x109319
+                        )
+    embed.set_author(name="吳瑞宸 盧宣嘉")
+
+    if output["channelID"] == "" :
+        embde.add_field(name="提醒",
+                        value="記得要設定頻道ID!",
+                        inline=False
+                        )
+
+    view = View()
+
+    button1 = button_idget("idget")
+    button2 = button_add_add("add",discord.ButtonStyle.green)
+    button3 = button_pri_add("pri",discord.ButtonStyle.blurple)
+    button4 = button_del_add("del",discord.ButtonStyle.red)
+
+    view.add_item(button1)
+    view.add_item(button2)
+    view.add_item(button3)
+    view.add_item(button4)
+
+    await ctx.send(embed=embed , view=view)
 
 bot.run(output["TOKEN"])
